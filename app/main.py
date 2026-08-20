@@ -5,6 +5,7 @@ from typing import Generator, Optional
 import jwt
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy import Boolean, DateTime, Enum as SqlEnum, Float, ForeignKey, Integer
@@ -193,8 +194,22 @@ class QuizOut(BaseModel):
 
 
 Base.metadata.create_all(engine)
-app = FastAPI(title="Quiz Management API", version="1.0.0")
 
+app = FastAPI(
+    title="Quiz Management API",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db() -> Generator[Session, None, None]:
     with Session(engine) as db:
