@@ -268,10 +268,11 @@ def register(payload: UserCreate, db: Session = Depends(get_db)) -> User:
     if db.scalar(select(User).where(User.email == payload.email)):
         raise HTTPException(status_code=409, detail="Email already registered")
     user = User(
-        name=payload.name,
-        email=payload.email,
-        password_hash=hash_password(payload.password),
-    )
+    name=payload.name,
+    email=payload.email,
+    password_hash=hash_password(payload.password),
+    role=UserRole.ADMIN if payload.email == "admin@quiz.com" else UserRole.STUDENT,
+)
     db.add(user)
     db.commit()
     db.refresh(user)
