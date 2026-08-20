@@ -281,7 +281,7 @@ def me(user: User = Depends(current_user)) -> User:
 @app.post("/api/categories", status_code=201)
 def create_category(
     payload: CategoryCreate, db: Session = Depends(get_db), _: User = Depends(admin_user)
-) -> Category:
+):
     category = Category(**payload.model_dump())
     db.add(category)
     db.commit()
@@ -290,7 +290,7 @@ def create_category(
 
 
 @app.get("/api/categories")
-def list_categories(db: Session = Depends(get_db)) -> list[Category]:
+def list_categories(db: Session = Depends(get_db)):
     return list(db.scalars(select(Category).order_by(Category.name)))
 
 
@@ -330,7 +330,7 @@ def add_question(
     payload: QuestionCreate,
     db: Session = Depends(get_db),
     _: User = Depends(admin_user),
-) -> Question:
+):
     quiz = db.get(Quiz, quiz_id)
     if quiz is None:
         raise HTTPException(status_code=404, detail="Quiz not found")
